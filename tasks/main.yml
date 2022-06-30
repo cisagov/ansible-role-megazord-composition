@@ -1,8 +1,8 @@
 ---
 # tasks file for megazord composition
-# - name: Load var file
-#   ansible.builtin.include_vars:
-#     file: main.yml
+- name: Load var file
+  ansible.builtin.include_vars:
+    file: main.yml
 
 - name: Run SourcePoint
   ansible.builtin.command: ./SourcePoint -Host {{ domain_name }} -Outfile out.profile -Injector NtMapViewOfSection -Stage True
