@@ -1,2 +1,25 @@
 ---
-# tasks file for skeleton
+# tasks file for megazord composition
+- name: Load var file
+  ansible.builtin.include_vars:
+    file: main.yml
+
+- name: Run SourcePoint
+  ansible.builtin.command: ./SourcePoint -Host {{ domain_name }} -Outfile out.profile -Injector NtMapViewOfSection -Stage True
+  args:
+    chdir: '/tools/SourcePoint'
+    creates: '/tools/SourcePoint/out.profile'
+    executable: /bin/bash
+
+- name: Run cs2modrewrite.py
+  ansible.builtin.command: python3 cs2modrewrite.py -i /tools/SourcePoint/out.profile -c http://{{ domain_name }} -r http://cisa.gov -o .htaccess
+  args:
+    chdir: '/tools/cs2modrewrite'
+    creates: '/tools/cs2modrewrite/.htaccess'
+    executable: /bin/bash
+
+- name: Replace instances of 'P' (Proxy)
+  ansible.builtin.replace:
+    path: /tools/cs2modrewrite/.htaccess
+    regexp: '\[P,L]'
+    replace: '[L]'

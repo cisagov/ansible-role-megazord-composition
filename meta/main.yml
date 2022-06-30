@@ -34,6 +34,10 @@ galaxy_info:
       versions:
         - bionic
         - focal
-  role_name: megazord-composition
+  role_name: megazord
 
-dependencies: []
+dependencies:
+  - src: https://github.com/xvxd4sh/ansible-role-cs2modrewrite
+    name: cs2modrewrite
+  - src: https://github.com/hsfetty/ansible-role-sourcepoint
+    name: sourcepoint
