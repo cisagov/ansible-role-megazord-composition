@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  author: First Last
+  author: Brian Hambleton
   description: Megazord Composition Ansible role
   company: CISA Cyber Assessments
   galaxy_tags:
