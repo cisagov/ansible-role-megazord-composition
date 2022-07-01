@@ -12,7 +12,7 @@
     executable: /bin/bash
 
 - name: Run cs2modrewrite.py
-  ansible.builtin.command: python3 cs2modrewrite.py -i /tools/SourcePoint/out.profile -c https://{{ domain_name }} -r https://cisa.gov -o .htaccess
+  ansible.builtin.command: python3 cs2modrewrite.py -i /tools/SourcePoint/out.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o .htaccess
   args:
     chdir: '/tools/cs2modrewrite'
     creates: '/tools/cs2modrewrite/.htaccess'
