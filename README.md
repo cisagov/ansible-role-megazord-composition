@@ -1,8 +1,6 @@
 # ansible-role-megazord-composition #
 
 [![GitHub Build Status](https://github.com/hsfetty/ansible-role-megazord-composition/workflows/build/badge.svg)](https://github.com/hsfetty/ansible-role-megazord-composition/actions)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/hsfetty/ansible-role-megazord-composition.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/hsfetty/ansible-role-megazord-composition/alerts/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/hsfetty/ansible-role-megazord-composition.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/hsfetty/ansible-role-megazord-composition/context:python)
 
 ## Requirements ##
 
@@ -10,18 +8,14 @@ None.
 
 ## Role Variables ##
 
-None.
-
-<!--
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
-| optional_variable | Describe its purpose. | `default_value` | No |
-| required_variable | Describe its purpose. | n/a | Yes |
--->
+| domain_name | The domain name for cobalt strike. | `sample.domain` | No |
 
 ## Dependencies ##
 
-None.
+- [ansible-role-cs2modrewrite](https://github.com/xvxd4sh/ansible-role-cs2modrewrite)
+- [ansible-role-sourcepoint](https://github.com/hsfetty/ansible-role-sourcepoint)
 
 ## Example Playbook ##
 
@@ -55,4 +49,4 @@ with this waiver of copyright interest.
 
 ## Author Information ##
 
-First Last - <first.last@trio.dhs.gov>
+Brian Hambleton - <brian.hambleton@dhs.gov>
