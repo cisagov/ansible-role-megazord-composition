@@ -5,14 +5,14 @@
     file: main.yml
 
 - name: Run SourcePoint
-  ansible.builtin.command: ./SourcePoint -Host {{ domain_name }} -Outfile out.profile -Injector NtMapViewOfSection -Stage True
+  ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
   args:
     chdir: '/tools/SourcePoint'
     creates: '/tools/SourcePoint/out.profile'
     executable: /bin/bash
 
 - name: Run cs2modrewrite.py
-  ansible.builtin.command: python3 cs2modrewrite.py -i /tools/SourcePoint/out.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o .htaccess
+  ansible.builtin.command: 'python3 cs2modrewrite.py -i /tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o .htaccess'
   args:
     chdir: '/tools/cs2modrewrite'
     creates: '/tools/cs2modrewrite/.htaccess'
