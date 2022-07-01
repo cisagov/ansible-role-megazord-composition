@@ -18,6 +18,9 @@
     creates: '/tools/cs2modrewrite/.htaccess'
     executable: /bin/bash
 
+# Remove the 'P' for proxy because it interferes with the webserver configuration
+# Issue described here:
+  # https://github.com/hsfetty/ansible-role-megazord-composition/issues/8
 - name: Replace instances of 'P' (Proxy)
   ansible.builtin.replace:
     path: /tools/cs2modrewrite/.htaccess
