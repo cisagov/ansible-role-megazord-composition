@@ -12,6 +12,7 @@
   args:
     chdir: '/tools/SourcePoint'
     executable: /bin/bash
+    creates: '/tools/SourcePoint/SourcePoint'
   register: sourcepoint_output
   until: sourcepoint_output.rc == 0
   retries: 5
