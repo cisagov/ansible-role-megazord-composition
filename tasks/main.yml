@@ -17,10 +17,6 @@
   retries: 5
   changed_when: sourcepoint_output.rc == 0
 
-- name: debug attempts
-  debug:
-    var: sourcepoint_output.attempts
-
 - name: Run cs2modrewrite.py
   ansible.builtin.command: 'python3 cs2modrewrite.py -i /tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o .htaccess'
   args:
