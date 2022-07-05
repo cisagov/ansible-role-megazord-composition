@@ -17,7 +17,7 @@
       ansible.builtin.debug:
         msg: 'Error running SourcePoint. Trying again.'
 
-    - name: Run SourcePoint
+    - name: Try running SourcePoint again
       ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
       args:
         chdir: '/tools/SourcePoint'
