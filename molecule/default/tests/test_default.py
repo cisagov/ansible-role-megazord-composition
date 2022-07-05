@@ -1,7 +1,7 @@
 """Module containing the tests for the default scenario."""
 
 # Standard Python Libraries
-import os
+import os, re
 
 # Third-Party Libraries
 import pytest
@@ -13,12 +13,31 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 @pytest.mark.parametrize(
-    "f", ["/tools/SourcePoint/out.profile", "/tools/cs2modrewrite/.htaccess"]
+    "f", ["/tools/cs2modrewrite/.htaccess"]
 )
-def test_files(host, f):
-    """Test that expected files were created and are non-empty."""
+def test_htaccess_file(host, f):
+    """Test that expected htaccess file was created and is non-empty."""
+    
     assert host.file(f).exists
     assert host.file(f).is_file
     assert host.file(f).content
-    if f == ".htaccess":
-        assert "[P,L]" not in host.file(f).content_string
+    assert "[P,L]" not in host.file(f).content_string
+
+@pytest.mark.parametrize("d", ["/tools/SourcePoint"])
+def test_sourcepoint_profile(host, d):
+    """Test that the expected sourcepoint profile was created and is not empty"""
+
+    # First test if SourcePoint directory exists
+    assert host.file(d).exists
+    assert host.file(d).is_directory
+    dirContents = host.file(d).listdir()
+    assert dirContents
+
+    # Iterate of directory contents to ensure at least 1 file is present 
+    # matching the scheme below
+    scheme = "SourcePoint-\d{4}-\d{2}-\d{2}.profile"
+    match = [file for file in dirContents if re.match(scheme, file)]
+    assert len(match) > 0
+    assert host.file(match[0]).exists
+    assert host.file(match[0]).is_file
+    assert host.file(match[0]).content
