@@ -11,6 +11,7 @@ None.
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
 | domain_name | The domain name for cobalt strike. | `sample.domain` | No |
+| redirect_location | The site to redirect unwanted traffic to, excluding 'https://'. | `cisa.gov` | No |
 
 ## Dependencies ##
 

@@ -5,19 +5,37 @@
     file: main.yml
 
 - name: Run SourcePoint
-  ansible.builtin.command: ./SourcePoint -Host {{ domain_name }} -Outfile out.profile -Injector NtMapViewOfSection -Stage True
-  args:
-    chdir: '/tools/SourcePoint'
-    creates: '/tools/SourcePoint/out.profile'
-    executable: /bin/bash
+  block:
+    - name: Try to run SourcePoint
+      ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
+      args:
+        chdir: '/tools/SourcePoint'
+        creates: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
+        executable: /bin/bash
+  rescue:
+  #Retry up to 5 times, until status code is 0 (no error)
+  #Issue documented here:
+    #https://github.com/hsfetty/ansible-role-megazord-composition/issues/10
+    - name: Re-run SourcePoint
+      ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
+      args:
+        chdir: '/tools/SourcePoint'
+        executable: /bin/bash
+      register: sourcepoint_output
+      until: sourcepoint_output.rc == 0
+      retries: 5
+      changed_when: sourcepoint_output.rc == 0
 
 - name: Run cs2modrewrite.py
-  ansible.builtin.command: python3 cs2modrewrite.py -i /tools/SourcePoint/out.profile -c http://{{ domain_name }} -r http://cisa.gov -o .htaccess
+  ansible.builtin.command: 'python3 cs2modrewrite.py -i /tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o .htaccess'
   args:
     chdir: '/tools/cs2modrewrite'
     creates: '/tools/cs2modrewrite/.htaccess'
     executable: /bin/bash
 
+# Remove the 'P' for proxy because it interferes with the webserver configuration
+# Issue described here:
+  # https://github.com/hsfetty/ansible-role-megazord-composition/issues/8
 - name: Replace instances of 'P' (Proxy)
   ansible.builtin.replace:
     path: /tools/cs2modrewrite/.htaccess
