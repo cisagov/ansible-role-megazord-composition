@@ -36,6 +36,7 @@ def test_sourcepoint_profile(host, d):
     scheme = r"SourcePoint-\d{4}-\d{2}-\d{2}.profile"
     match = [file for file in dirContents if re.match(scheme, file)]
     assert len(match) > 0
-    assert host.file(match[0]).exists
-    assert host.file(match[0]).is_file
-    assert host.file(match[0]).content
+    profile = "{}/{}".format(d, match[0])
+    assert host.file(profile).exists
+    assert host.file(profile).is_file
+    assert host.file(profile).content
