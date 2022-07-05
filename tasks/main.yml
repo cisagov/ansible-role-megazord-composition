@@ -4,25 +4,13 @@
   ansible.builtin.include_vars:
     file: main.yml
 
-- name: Attempt to run SourcePoint
-  block:
-    - name: Run SourcePoint
-      ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
-      args:
-        chdir: '/tools/SourcePoint'
-        creates: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
-        executable: /bin/bash
-  rescue:
-    - name: Print error
-      ansible.builtin.debug:
-        msg: 'Error running SourcePoint. Trying again.'
-
-    - name: Try running SourcePoint again
-      ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
-      args:
-        chdir: '/tools/SourcePoint'
-        creates: '/tools/SourcePoint/out.profile'
-        executable: /bin/bash
+- name: Run SourcePoint
+  ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
+  args:
+    chdir: '/tools/SourcePoint'
+    creates: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
+    executable: /bin/bash
+  retries: 5
 
 - name: Run cs2modrewrite.py
   ansible.builtin.command: 'python3 cs2modrewrite.py -i /tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o .htaccess'
