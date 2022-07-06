@@ -5,26 +5,10 @@
     file: main.yml
 
 - name: Run SourcePoint
-  block:
-    - name: Try to run SourcePoint
-      ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
-      args:
-        chdir: '/tools/SourcePoint'
-        creates: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
-        executable: /bin/bash
-  rescue:
-#   #Retry up to 5 times, until status code is 0 (no error)
-#   #Issue documented here:
-#     #https://github.com/hsfetty/ansible-role-megazord-composition/issues/10
-    - name: Re-run SourcePoint
-      ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
-      args:
-        chdir: '/tools/SourcePoint'
-        executable: /bin/bash
-      register: sourcepoint_output
-      until: sourcepoint_output.rc == 0
-      retries: 5
-      changed_when: sourcepoint_output.rc == 0
+  ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
+  args:
+    chdir: '/tools/SourcePoint'
+    creates: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
 
 - name: Run cs2modrewrite.py
   ansible.builtin.command: 'python3 cs2modrewrite.py -i /tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o .htaccess'
