@@ -2,3 +2,4 @@
 #The domain name for cobalt strike
 domain_name: sample.domain
 redirect_location: cisa.gov
+default_profile: default.profile

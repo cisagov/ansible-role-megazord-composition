@@ -41,3 +41,14 @@
     path: /tools/cs2modrewrite/.htaccess
     regexp: '\[P,L]'
     replace: '[L]'
+
+- name: Extract password
+  slurp:
+    src: '{{ default_profile }}'
+  register: file_data
+
+- name: Append to file
+  ansible.builtin.blockinfile:
+    path: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
+    block: |
+      '{{ file_data["content"] | b64decode }}'
