@@ -4,6 +4,11 @@
   ansible.builtin.include_vars:
     file: main.yml
 
+- name: Check if profile is already present
+  stat:
+    path: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
+  register: stat_profile
+
 #Retry up to 5 times, until status code is 0 (no error)
 #Issue documented here:
 #https://github.com/hsfetty/ansible-role-megazord-composition/issues/10
@@ -16,6 +21,7 @@
   register: sourcepoint_output
   until: sourcepoint_output.rc == 0
   retries: 5
+  when: not stat_profile.stat.exists
 
 - name: Run cs2modrewrite.py
   ansible.builtin.command: 'python3 cs2modrewrite.py -i /tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o .htaccess'
