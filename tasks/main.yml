@@ -17,7 +17,6 @@
   args:
     chdir: '/tools/SourcePoint'
     executable: /bin/bash
-    creates: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
   register: sourcepoint_output
   until: sourcepoint_output.rc == 0
   retries: 5
