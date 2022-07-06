@@ -45,13 +45,13 @@
 #TODO: Change location and add check for if the file is present
 - name: Copy profile into place
   copy:
-    src: default.profile
-    dest: /tools/default.profile
+    src: "{{ default_profile }}"
+    dest: "/tools/{{ default_profile }}"
     mode: 0644
 
 - name: Extract password
-  slurp:
-    src: /tools/default.profile
+  ansible.builtin.slurp:
+    src: "/tools/{{ default_profile }}"
   register: file_data
 
 - name: Append to file
