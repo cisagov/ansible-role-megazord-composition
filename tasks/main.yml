@@ -15,7 +15,6 @@
   args:
     chdir: '/tools/cs2modrewrite'
     creates: '/tools/cs2modrewrite/.htaccess'
-    executable: /bin/bash
 
 # Remove the 'P' for proxy because it interferes with the webserver configuration
 # Issue described here:
@@ -25,3 +24,21 @@
     path: /tools/cs2modrewrite/.htaccess
     regexp: '\[P,L]'
     replace: '[L]'
+
+#TODO: Change location and add check for if the file is present
+- name: Copy profile into place
+  copy:
+    src: "{{ default_profile }}"
+    dest: "/tools/{{ default_profile }}"
+    mode: 0644
+
+- name: Extract password
+  ansible.builtin.slurp:
+    src: "/tools/{{ default_profile }}"
+  register: file_data
+
+- name: Append to file
+  ansible.builtin.blockinfile:
+    path: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
+    block: |
+      '{{ file_data["content"] | b64decode }}'
