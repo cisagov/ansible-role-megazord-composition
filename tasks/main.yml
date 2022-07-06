@@ -13,9 +13,9 @@
         creates: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
         executable: /bin/bash
   rescue:
-  #Retry up to 5 times, until status code is 0 (no error)
-  #Issue documented here:
-    #https://github.com/hsfetty/ansible-role-megazord-composition/issues/10
+#   #Retry up to 5 times, until status code is 0 (no error)
+#   #Issue documented here:
+#     #https://github.com/hsfetty/ansible-role-megazord-composition/issues/10
     - name: Re-run SourcePoint
       ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
       args:
@@ -33,9 +33,9 @@
     creates: '/tools/cs2modrewrite/.htaccess'
     executable: /bin/bash
 
-# Remove the 'P' for proxy because it interferes with the webserver configuration
-# Issue described here:
-  # https://github.com/hsfetty/ansible-role-megazord-composition/issues/8
+# # Remove the 'P' for proxy because it interferes with the webserver configuration
+# # Issue described here:
+#   # https://github.com/hsfetty/ansible-role-megazord-composition/issues/8
 - name: Replace instances of 'P' (Proxy)
   ansible.builtin.replace:
     path: /tools/cs2modrewrite/.htaccess
@@ -45,13 +45,13 @@
 #TODO: Change location and add check for if the file is present
 - name: Copy profile into place
   copy:
-    src: '{{ default_profile }}'
-    dest: '/tools/{{ default_profile }}'
+    src: default.profile
+    dest: /tools/default.profile
     mode: 0644
 
 - name: Extract password
   slurp:
-    src: '/tools/{{ default_profile }}'
+    src: /tools/default.profile
   register: file_data
 
 - name: Append to file
