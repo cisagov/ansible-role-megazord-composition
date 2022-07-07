@@ -61,3 +61,9 @@
     path: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
     block: |
       '{{ file_data["content"] | b64decode }}'
+
+- name: Make cs2modrewrite good
+  ansible.builtin.replace:
+    path: /tools/cs2modrewrite/cs2modrewrite.py
+    regexp: 'profile = open\(args.inputfile,"r"\)\ncontents = profile.read\(\)'
+    replace: 'profile = open(args.inputfile,"r",encoding="utf-8")\ncontents = profile.read().decode("utf-8")'
