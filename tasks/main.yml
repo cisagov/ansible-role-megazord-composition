@@ -4,15 +4,6 @@
   ansible.builtin.include_vars:
     file: main.yml
 
-- name: get python version
-  command: python3 --version
-  register: python_vers
-  changed_when: false
-
-- name: Print python version
-  debug:
-    var: python_vers
-
 - name: Create the /tools/Megazord-Composition directory
   ansible.builtin.file:
     mode: 0755
@@ -35,7 +26,7 @@
     creates: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
 
 - name: Run cs2modrewrite.py
-  ansible.builtin.command: './cs2modrewrite.py -i /tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o /tools/Megazord-Composition/src/apache2/.htaccess'
+  ansible.builtin.command: 'python3 cs2modrewrite.py -i /tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o /tools/Megazord-Composition/src/apache2/.htaccess'
   args:
     chdir: '/tools/cs2modrewrite'
     creates: '/tools/Megazord-Composition/src/apache2/.htaccess'
