@@ -40,3 +40,5 @@ def test_sourcepoint_profile(host, d):
     assert host.file(profile).exists
     assert host.file(profile).is_file
     assert host.file(profile).content
+    assert host.file(profile).contains("set keystore")
+    assert host.file(profile).contains("set password")
