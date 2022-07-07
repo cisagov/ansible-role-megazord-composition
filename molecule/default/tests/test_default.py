@@ -13,7 +13,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 ).get_hosts("all")
 
 
-@pytest.mark.parametrize("f", ["/tools/cs2modrewrite/.htaccess"])
+@pytest.mark.parametrize("f", ["/tools/Megazord-Composition/src/apache2/.htaccess"])
 def test_htaccess_file(host, f):
     """Test that expected htaccess file was created and is non-empty."""
     assert host.file(f).exists
