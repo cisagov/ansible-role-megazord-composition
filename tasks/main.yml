@@ -4,6 +4,30 @@
   ansible.builtin.include_vars:
     file: main.yml
 
+- name: get python version
+  command: python3 --version
+  register: python_vers
+  changed_when: false
+
+- name: Print python version
+  debug:
+    var: python_vers
+
+- name: Create the /tools/Megazord-Composition directory
+  ansible.builtin.file:
+    mode: 0755
+    path: /tools/Megazord-Composition
+    state: directory
+
+- name: Download and tar the Megazord-Composition
+  ansible.builtin.unarchive:
+    src: https://github.com/xvxd4sh/megazord-composition/tarball/develop
+    dest: /tools/Megazord-Composition
+    remote_src: yes
+    extra_opts:
+      - "--strip-components=1"
+    creates: /tools/Megazord-Composition/docker-compose.yml
+
 - name: Run SourcePoint
   ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
   args:
@@ -11,17 +35,19 @@
     creates: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
 
 - name: Run cs2modrewrite.py
-  ansible.builtin.command: 'python3 cs2modrewrite.py -i /tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o .htaccess'
+  ansible.builtin.command: 'python3 cs2modrewrite.py -i /tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o /tools/Megazord-Composition/src/apache2/.htaccess'
   args:
     chdir: '/tools/cs2modrewrite'
-    creates: '/tools/cs2modrewrite/.htaccess'
+    creates: '/tools/Megazord-Composition/src/apache2/.htaccess'
+  environment:
+    PYTHONIOENCODING: utf8
 
 # Remove the 'P' for proxy because it interferes with the webserver configuration
 # Issue described here:
   # https://github.com/hsfetty/ansible-role-megazord-composition/issues/8
 - name: Replace instances of 'P' (Proxy)
   ansible.builtin.replace:
-    path: /tools/cs2modrewrite/.htaccess
+    path: /tools/Megazord-Composition/src/apache2/.htaccess
     regexp: '\[P,L]'
     replace: '[L]'
 
@@ -37,8 +63,18 @@
     src: "/tools/{{ default_profile }}"
   register: file_data
 
-- name: Append to file
+- name: Append password and keystore to file
   ansible.builtin.blockinfile:
     path: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
     block: |
       '{{ file_data["content"] | b64decode }}'
+
+- name: Restart docker daemon
+  ansible.builtin.service:
+    name: docker
+    state: started
+
+- name: Start docker-compose
+  community.docker.docker_compose:
+    project_src: /tools/Megazord-Composition/
+    build: no
