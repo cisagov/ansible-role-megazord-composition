@@ -32,13 +32,21 @@
     dest: "/tools/{{ default_profile }}"
     mode: 0644
 
-- name: Extract password
+#The ansible slurp module will read the file into base64 encoded data
+- name: Extract keystore and password from user's profile
   ansible.builtin.slurp:
     src: "/tools/{{ default_profile }}"
-  register: file_data
+  register: encoded_profile
 
-- name: Append to file
+#Decode the encoded profile and split on new line to extract the last 4 lines later
+- name: Decode the profile and split on new line
+  set_fact:
+    https_certificate: "{{ encoded_profile['content'] | b64decode | split('\n') }}"
+
+#Get the last 6 lines of the profile, which contains the https-certificate keystore
+#and password, join it to a string, and append it to the SourcePoint profile
+- name: Append certificate info to SourcePoint generated profile
   ansible.builtin.blockinfile:
     path: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
     block: |
-      '{{ file_data["content"] | b64decode }}'
+      "{{ https_certificate[-6:] | join('\n') }}"
