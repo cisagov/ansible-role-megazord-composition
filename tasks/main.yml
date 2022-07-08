@@ -5,16 +5,16 @@
     file: main.yml
 
 - name: Run SourcePoint
-  ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
+  ansible.builtin.command: "./SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True"
   args:
-    chdir: '/tools/SourcePoint'
-    creates: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
+    chdir: /tools/SourcePoint
+    creates: "/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile"
 
 - name: Run cs2modrewrite.py
-  ansible.builtin.command: 'python3 cs2modrewrite.py -i /tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o .htaccess'
+  ansible.builtin.command: "python3 cs2modrewrite.py -i /tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o .htaccess"
   args:
-    chdir: '/tools/cs2modrewrite'
-    creates: '/tools/cs2modrewrite/.htaccess'
+    chdir: /tools/cs2modrewrite
+    creates: /tools/cs2modrewrite/.htaccess
 
 # Remove the 'P' for proxy because it interferes with the webserver configuration
 # Issue described here:
@@ -22,8 +22,8 @@
 - name: Replace instances of 'P' (Proxy)
   ansible.builtin.replace:
     path: /tools/cs2modrewrite/.htaccess
-    regexp: '\[P,L]'
-    replace: '[L]'
+    regexp: \[P,L]
+    replace: [L]
 
 #TODO: Change location and add check for if the file is present
 - name: Copy profile into place
@@ -45,8 +45,9 @@
 
 #Get the last 6 lines of the profile, which contains the https-certificate keystore
 #and password, join it to a string, and append it to the SourcePoint profile
+#Ansible fails if we try to do all of the manipulation in the https_certificate variable
 - name: Append certificate info to SourcePoint generated profile
   ansible.builtin.blockinfile:
-    path: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
+    path: "/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile"
     block: |
       "{{ https_certificate[-6:] | join('\n') }}"
