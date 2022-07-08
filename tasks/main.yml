@@ -1,8 +1,8 @@
 ---
 # tasks file for megazord composition
-#- name: Load var file
-#  ansible.builtin.include_vars:
-#    file: main.yml
+- name: Load var file
+  ansible.builtin.include_vars:
+    file: main.yml
 
 - name: Create the /tools/Megazord-Composition directory
   ansible.builtin.file:
@@ -24,17 +24,6 @@
   args:
     chdir: '/tools/SourcePoint'
     creates: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
-
-- name: Read contents of file
-  command: cat SourcePoint-{{ ansible_date_time.date }}.profile
-  args:
-    chdir: '/tools/SourcePoint'
-  changed_when: false
-  register: sourcepoint_profile
-
-- name: Debug contents
-  debug:
-    var: sourcepoint_profile
 
 - name: Standardize encoding in cs2modrewrite
   ansible.builtin.replace:
