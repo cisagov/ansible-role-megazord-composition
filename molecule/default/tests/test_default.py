@@ -1,13 +1,13 @@
 """Module containing the tests for the default scenario."""
 
 # Standard Python Libraries
+from datetime import date
 import os
-import re
 
 # Third-Party Libraries
 import pytest
 import testinfra.utils.ansible_runner
-from datetime import date
+
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ["MOLECULE_INVENTORY_FILE"]
 ).get_hosts("all")
@@ -25,8 +25,8 @@ def test_htaccess_file(host, f):
 @pytest.mark.parametrize("d", ["/tools/SourcePoint"])
 def test_sourcepoint_profile(host, d):
     """Test that the expected sourcepoint profile was created and is not empty."""
-    date = (date.today())
-    profile = "{}/SourcePoint-{}.profile".format(d, date)
+    today = date.today()
+    profile = "{}/SourcePoint-{}.profile".format(d, today)
     assert host.file(profile).exists
     assert host.file(profile).is_file
     assert host.file(profile).content
