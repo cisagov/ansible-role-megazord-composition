@@ -58,7 +58,7 @@
   # https://github.com/hsfetty/ansible-role-megazord-composition/issues/8
 - name: Replace instances of 'P' (Proxy)
   ansible.builtin.replace:
-    path: /tools/cs2modrewrite/.htaccess
+    path: /tools/Megazord-Composition/src/apache2/.htaccess
     regexp: \[P,L]
     replace: [L]
 
