@@ -88,3 +88,16 @@
     path: "/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile"
     block: |
       "{{ https_certificate[-6:] | join('\n') }}"
+
+# Check to see what containers are running and save output
+- name: Run docker ps to check if containers are already running
+  ansible.builtin.command: 'docker ps'
+  register: ps_output
+  changed_when: False
+
+# Run docker compose to build and run the containers
+- name: Run docker compose build and docker compose up
+  ansible.builtin.command: 'docker compose up -f /tools/Megazord-Composition/docker-compose.yml'
+  register: command_output
+  when: "'coredns' not in ps_output and 'apache2' not in ps_output"
+  failed_when: "when 'ERROR' in command_output"
