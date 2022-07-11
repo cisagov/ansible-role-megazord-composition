@@ -20,17 +20,23 @@
     creates: /tools/Megazord-Composition/docker-compose.yml
 
 - name: Run SourcePoint
-  ansible.builtin.command: './SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True'
+  ansible.builtin.command: "./SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True"
   args:
-    chdir: '/tools/SourcePoint'
-    creates: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
+    chdir: /tools/SourcePoint
+    creates: "/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile"
 
+#Edit cs2modrewrite python code so that it always uses utf8 encoding
+#See issue for more info:
+## https://github.com/hsfetty/ansible-role-megazord-composition/issues/19
 - name: Standardize encoding in cs2modrewrite
   ansible.builtin.replace:
     path: /tools/cs2modrewrite/cs2modrewrite.py
     regexp: 'profile = open\(args.inputfile,"r"\)'
     replace: 'profile = open(args.inputfile,"r",encoding="utf-8")'
 
+#Edit cs2modrewrite python code so that it always uses utf8 decoding
+#See issue for more info:
+## https://github.com/hsfetty/ansible-role-megazord-composition/issues/19
 - name: Decoding of file contents in cs2modrewrite
   ansible.builtin.replace:
     path: /tools/cs2modrewrite/cs2modrewrite.py
@@ -53,8 +59,8 @@
 - name: Replace instances of 'P' (Proxy)
   ansible.builtin.replace:
     path: /tools/Megazord-Composition/src/apache2/.htaccess
-    regexp: '\[P,L]'
-    replace: '[L]'
+    regexp: \[P,L]
+    replace: [L]
 
 #TODO: Change location and add check for if the file is present
 - name: Copy profile into place
@@ -63,13 +69,22 @@
     dest: "/tools/{{ default_profile }}"
     mode: 0644
 
-- name: Extract password
+#The ansible slurp module will read the file into base64 encoded data
+- name: Extract keystore and password from user's profile
   ansible.builtin.slurp:
     src: "/tools/{{ default_profile }}"
-  register: file_data
+  register: encoded_profile
 
-- name: Append password and keystore to file
+#Decode the encoded profile and split on new line to extract the last 4 lines later
+- name: Decode the profile and split on new line
+  set_fact:
+    https_certificate: "{{ encoded_profile['content'] | b64decode | split('\n') }}"
+
+#Get the last 6 lines of the profile, which contains the https-certificate keystore
+#and password, join it to a string, and append it to the SourcePoint profile
+#Ansible fails if we try to do all of the manipulation in the https_certificate variable
+- name: Append certificate info to SourcePoint generated profile
   ansible.builtin.blockinfile:
-    path: '/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile'
+    path: "/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile"
     block: |
-      '{{ file_data["content"] | b64decode }}'
+      "{{ https_certificate[-6:] | join('\n') }}"
