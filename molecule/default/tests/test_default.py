@@ -7,7 +7,7 @@ import re
 # Third-Party Libraries
 import pytest
 import testinfra.utils.ansible_runner
-
+from datetime import date
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ["MOLECULE_INVENTORY_FILE"]
 ).get_hosts("all")
@@ -25,18 +25,8 @@ def test_htaccess_file(host, f):
 @pytest.mark.parametrize("d", ["/tools/SourcePoint"])
 def test_sourcepoint_profile(host, d):
     """Test that the expected sourcepoint profile was created and is not empty."""
-    # First test if SourcePoint directory exists
-    assert host.file(d).exists
-    assert host.file(d).is_directory
-    dirContents = host.file(d).listdir()
-    assert dirContents
-
-    # Iterate of directory contents to ensure at least 1 file is present
-    # matching the scheme below
-    scheme = r"SourcePoint-\d{4}-\d{2}-\d{2}.profile"
-    match = [file for file in dirContents if re.match(scheme, file)]
-    assert len(match) > 0
-    profile = "{}/{}".format(d, match[0])
+    date = (date.today())
+    profile = "{}/SourcePoint-{}.profile".format(d, date)
     assert host.file(profile).exists
     assert host.file(profile).is_file
     assert host.file(profile).content
