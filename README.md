@@ -20,7 +20,7 @@ None.
 
 ## Example Playbook ##
 
-Here's how to use it in a playbook:
+Here's how to use this in a playbook:
 
 ```yaml
 - hosts: all
