@@ -97,10 +97,6 @@
     state: restarted
   changed_when: False
 
-# - name: Print ps output
-#   debug:
-#     msg: "{{ ps_output }}"
-
 # Check to see what containers are running and save output
 - name: Run docker ps to check if containers are already running
   ansible.builtin.command: 'docker ps'
@@ -112,4 +108,4 @@
   ansible.builtin.command: 'docker compose -f /tools/Megazord-Composition/docker-compose.yml up'
   register: command_output
   when: "'coredns' not in ps_output and 'apache2' not in ps_output"
-  failed_when: "when 'ERROR' in command_output"
+  failed_when: "'ERROR' in command_output"
