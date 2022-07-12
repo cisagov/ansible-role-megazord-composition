@@ -1,5 +1,5 @@
 ---
-# tasks file for megazord composition
+tasks file for megazord composition
 - name: Load var file
   ansible.builtin.include_vars:
     file: main.yml
@@ -89,21 +89,17 @@
     block: |
       "{{ https_certificate[-6:] | join('\n') }}"
 
-- name: List running services
-  ansible.builtin.command: 'ps -aux'
-  register: ps_output
-  changed_when: False
-
-- name: Print ps output
-  debug:
-    msg: "{{ ps_output }}"
-
 # enable docker
 - name: Enable docker
   ansible.builtin.systemd:
-    name: dockerd
+    name: docker
     daemon_reload: yes
+    state: restarted
   changed_when: False
+
+# - name: Print ps output
+#   debug:
+#     msg: "{{ ps_output }}"
 
 # Check to see what containers are running and save output
 - name: Run docker ps to check if containers are already running
@@ -113,7 +109,7 @@
 
 # Run docker compose to build and run the containers
 - name: Run docker compose build and docker compose up
-  ansible.builtin.command: 'docker compose up -f /tools/Megazord-Composition/docker-compose.yml'
+  ansible.builtin.command: 'docker compose -f /tools/Megazord-Composition/docker-compose.yml up'
   register: command_output
   when: "'coredns' not in ps_output and 'apache2' not in ps_output"
   failed_when: "when 'ERROR' in command_output"
