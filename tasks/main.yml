@@ -96,7 +96,7 @@
     daemon_reload: yes
     state: started
   register: docker_state
-  
+
 
 # Check to see what containers are running and save output
 - name: Run docker ps to check if containers are already running
