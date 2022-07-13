@@ -105,7 +105,7 @@
 
 # Run docker compose to build and run the containers
 - name: Run docker compose build and docker compose up
-  ansible.builtin.command: 'docker compose -f /tools/Megazord-Composition/docker-compose.yml up'
+  ansible.builtin.command: 'docker compose -f /tools/Megazord-Composition/docker-compose.yml up --detach'
   register: command_output
   when: "'coredns' not in ps_output and 'apache2' not in ps_output"
   failed_when: "'ERROR' in command_output"
