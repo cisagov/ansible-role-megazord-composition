@@ -1,0 +1,16 @@
+[Unit]
+Description=Docker composition for Megazord
+After=docker.service network.target multi-user.target
+Requires=docker.service
+
+[Service]
+Restart=always
+
+ExecStartPre=/usr/bin/docker compose --file /tools/Megazord-Composition/docker-compose.yml down
+
+ExecStart=/usr/bin/docker compose --file /tools/Megazord-Composition/docker-compose.yml up
+
+ExecStop=/usr/bin/docker compose --file /tools/Megazord-Composition/docker-compose.yml down
+
+[Install]
+WantedBy=multi-user.target

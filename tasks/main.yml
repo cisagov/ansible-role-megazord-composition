@@ -1,8 +1,8 @@
 ---
 # tasks file for megazord composition
-- name: Load var file
-  ansible.builtin.include_vars:
-    file: main.yml
+# - name: Load var file
+#   ansible.builtin.include_vars:
+#     file: main.yml
 
 - name: Create the /tools/Megazord-Composition directory
   ansible.builtin.file:
@@ -88,3 +88,37 @@
     path: "/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile"
     block: |
       "{{ https_certificate[-6:] | join('\n') }}"
+
+- name: Pull docker images used by megazord composition
+  block:
+    - name: Start Docker
+      ansible.builtin.service:
+        name: docker
+        state: started
+    - name: >
+        Pull docker images
+      community.general.docker_image:
+        name: "{{ item }}"
+        source: pull
+      loop:
+        - xvxd4sh/coredns:latest
+        - xvxd4sh/apache2:latest
+
+- name: Configure megazord service
+  block:
+    - name: Set up megazord as a systemd service
+      ansible.builtin.copy:
+        src: megazord-composition.service
+        dest: /lib/systemd/system/
+        mode: 0644
+
+    - name: System daemon-reload
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Enable megazord systemd service
+      ansible.builtin.systemd:
+        name: megazord-composition.service
+        enabled: true
+  when:
+    - ansible_service_mgr == "systemd"

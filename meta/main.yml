@@ -14,22 +14,21 @@ galaxy_info:
   min_ansible_version: 2.10
   namespace: cisagov
   platforms:
-    - name: Amazon
-      versions:
-        - 2
+    # - name: Amazon
+    #   versions:
+    #     - 2
     - name: Debian
       versions:
-        - stretch
         - buster
         - bullseye
         # Kali linux isn't an option here, but it is based on
         # Debian Testing:
         # https://www.kali.org/docs/policy/kali-linux-relationship-with-debian
         - bookworm
-    - name: Fedora
-      versions:
-        - 34
-        - 35
+    # - name: Fedora
+    #   versions:
+    #     - 34
+    #     - 35
     - name: Ubuntu
       versions:
         - bionic
@@ -41,3 +40,5 @@ dependencies:
     name: cs2modrewrite
   - src: https://github.com/hsfetty/ansible-role-sourcepoint
     name: sourcepoint
+  - src: https://github.com/cisagov/ansible-role-docker
+    name: docker
