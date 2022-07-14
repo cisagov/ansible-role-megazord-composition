@@ -5,11 +5,7 @@ Requires=docker.service
 
 [Service]
 Restart=always
-Type=oneshot
-RemainAfterExit=yes
-
 ExecStart=/usr/bin/docker compose --file /tools/Megazord-Composition/docker-compose.yml up
-
 ExecStop=/usr/bin/docker compose --file /tools/Megazord-Composition/docker-compose.yml down
 
 [Install]
