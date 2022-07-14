@@ -3,6 +3,7 @@
 # Standard Python Libraries
 from datetime import date
 import os
+import psutil
 import time
 
 # Third-Party Libraries
@@ -42,8 +43,9 @@ def test_service(host):
 
 def test_containers_running(host):
     """Test that the Docker container are running."""
-    time.sleep(6)
-    assert host.service("megazord-composition").is_running
+    time.sleep(5) #make sure we give adequate time for containers to start before testing if they exist
+    output = os.popen("docker ps -a").read()
+    assert "coredns" in output and "apache" in output
 
 
 @pytest.mark.parametrize(
