@@ -121,6 +121,15 @@
   when:
     - ansible_service_mgr == "systemd"
 
+- name: Check status of service
+  ansible.builtin.command: systemctl status megazord-composition.service
+  register: status_output
+  ignore_errors: true
+
+- name: print status
+  ansible.builtin.debug:
+    msg: "{{ status_output }}"
+
 # enable and start megazord-composition service
 - name: Enable megazord systemd service
   ansible.builtin.systemd:
