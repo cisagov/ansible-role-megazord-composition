@@ -125,6 +125,7 @@
   ansible.builtin.command: systemctl status megazord-composition.service
   register: status_output
   ignore_errors: true
+  changed_when: false
 
 - name: print status
   ansible.builtin.debug:
