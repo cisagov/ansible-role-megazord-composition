@@ -32,3 +32,22 @@ def test_sourcepoint_profile(host, d):
     assert host.file(profile).content
     assert host.file(profile).contains("set keystore")
     assert host.file(profile).contains("set password")
+
+
+def test_service(host):
+    """Test that the expected service is enabled and running."""
+    assert host.service("megazord-composition").is_enabled
+
+
+@pytest.mark.parametrize(
+    "image",
+    [
+        "xvxd4sh/coredns:latest",
+        "xvxd4sh/apache2:latest",
+    ],
+)
+def test_docker_images_pulled(host, image):
+    """Test that the Docker images used by the Megazord Docker composition are present."""
+    assert image in host.check_output(
+        "docker images --format='{% raw %}{{.Repository}}:{{.Tag}}{% endraw %}'"
+    )
