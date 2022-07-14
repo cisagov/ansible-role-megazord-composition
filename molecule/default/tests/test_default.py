@@ -3,7 +3,6 @@
 # Standard Python Libraries
 from datetime import date
 import os
-import time
 
 # Third-Party Libraries
 import pytest
@@ -38,13 +37,6 @@ def test_sourcepoint_profile(host, d):
 def test_service(host):
     """Test that the expected service is enabled and running."""
     assert host.service("megazord-composition").is_enabled
-
-
-def test_containers_running(host):
-    """Test that the Docker container are running."""
-    time.sleep(5)
-    output = os.popen("docker ps -a").read()
-    assert "coredns" in output and "apache" in output
 
 
 @pytest.mark.parametrize(
