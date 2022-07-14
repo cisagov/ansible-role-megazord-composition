@@ -89,6 +89,7 @@
     block: |
       "{{ https_certificate[-6:] | join('\n') }}"
 
+# pull docker images from dockerhub
 - name: Pull docker images used by megazord composition
   block:
     - name: Start Docker
@@ -104,6 +105,7 @@
         - xvxd4sh/coredns:latest
         - xvxd4sh/apache2:latest
 
+# Copy service file into correct location and reload services
 - name: Configure megazord service
   block:
     - name: Set up megazord as a systemd service
@@ -116,9 +118,14 @@
       ansible.builtin.systemd:
         daemon_reload: true
 
-    - name: Enable megazord systemd service
-      ansible.builtin.systemd:
-        name: megazord-composition.service
-        enabled: true
   when:
     - ansible_service_mgr == "systemd"
+
+# enable and start megazord-composition service
+- name: Enable megazord systemd service
+  ansible.builtin.systemd:
+    name: megazord-composition.service
+    enabled: yes
+    state: started
+  tags:
+    - molecule-idempotence-notest
