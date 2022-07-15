@@ -65,11 +65,18 @@
     regexp: '\[P,L]'
     replace: '[L]'
 
+- name: Check if profile exists
+  ansible.builtin.stat:
+    path: "/tools/Malleable-C2-Profiles/normal/{{ profile_name }}"
+  register: profile_check
+  changed_when: profile_check.stat.exists == 'false'
+
 - name: Copy profile into place
-  copy:
+  ansible.builtin.copy:
     src: "{{ profile_name }}"
     dest: "/tools/Malleable-C2-Profiles/normal/{{ profile_name }}"
     mode: 0644
+  when: profile_check.stat.exists == 'false'
 
 #The ansible slurp module will read the file into base64 encoded data
 - name: Extract keystore and password from user's profile
@@ -79,7 +86,7 @@
 
 #Decode the encoded profile and split on new line to extract the last 4 lines later
 - name: Decode the profile and split on new line
-  set_fact:
+  ansible.builtin.set_fact:
     https_certificate: "{{ encoded_profile['content'] | b64decode | split('\n') }}"
 
 #Get the last 6 lines of the profile, which contains the https-certificate keystore
