@@ -12,6 +12,8 @@ None.
 |----------|-------------|---------|----------|
 | domain_name | The domain name for cobalt strike. | `sample.domain` | No |
 | redirect_location | The site to redirect unwanted traffic to, excluding 'https://'. | `cisa.gov` | No |
+| profile_name | Name of the profile to retrieve keystore and password | `default.profile` | No |
+| staging | Whether or not to set staging when configuring the profile | `True` | No |
 
 ## Dependencies ##
 
