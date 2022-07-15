@@ -65,14 +65,15 @@
   ansible.builtin.stat:
     path: "/tools/Malleable-C2-Profiles/normal/{{ profile_name }}"
   register: profile_check
-  changed_when: profile_check.stat.exists == 'false'
+  changed_when: not profile_check.stat.exists
 
+#Copy our default profile if there is nothing in that location
 - name: Copy profile into place
   ansible.builtin.copy:
     src: "{{ profile_name }}"
     dest: "/tools/Malleable-C2-Profiles/normal/{{ profile_name }}"
     mode: 0644
-  when: profile_check.stat.exists == 'false'
+  when: not profile_check.stat.exists
 
 #The ansible slurp module will read the file into base64 encoded data
 - name: Extract keystore and password from user's profile
@@ -132,7 +133,6 @@
     - name: System daemon-reload
       ansible.builtin.systemd:
         daemon_reload: true
-
   when:
     - ansible_service_mgr == "systemd"
 
