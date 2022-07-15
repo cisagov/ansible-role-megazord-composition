@@ -6,6 +6,7 @@ import os
 
 # Third-Party Libraries
 import pytest
+import requests
 import testinfra.utils.ansible_runner
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
@@ -34,9 +35,16 @@ def test_sourcepoint_profile(host, d):
     assert host.file(profile).contains("set password")
 
 
+def test_containers(host):
+    """Test that the docker containers are running."""
+    assert host.docker("apache").is_running
+    assert host.docker("coredns").is_running
+
+
 def test_service(host):
     """Test that the expected service is enabled and running."""
     assert host.service("megazord-composition").is_enabled
+    assert host.service("megazord-composition").is_running
 
 
 @pytest.mark.parametrize(
@@ -51,3 +59,28 @@ def test_docker_images_pulled(host, image):
     assert image in host.check_output(
         "docker images --format='{% raw %}{{.Repository}}:{{.Tag}}{% endraw %}'"
     )
+
+
+def test_redirection_apache(host):
+    """Test that the apache redirection is working as intended."""
+    file_name = "/tools/SourcePoint"
+    file_name += date.today()
+    file_name += ".profile"
+    user_agent = ""
+    htaccess = "/tools/Megazord-Composition/src/apache2/.htaccess"
+    htaccess_contents = ""
+    uri = ""
+
+    with open(file_name, "r") as f:
+        lines = f.readlines()
+        for line in lines:
+            if "useragent" in line:
+                user_agent = line.split(" ")[-1][:-1]
+                break
+    
+    with open(htaccess, "r") as f:
+        contents = f.read()
+        contents = contents.split("\n")
+    
+    uri = contents[contents.index("## Profile URIs")+1].split("^(")[1].split(".*|")[0]
+    assert True

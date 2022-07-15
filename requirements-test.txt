@@ -11,3 +11,4 @@ molecule[docker]
 pre-commit
 pytest-testinfra
 yamllint
+requests
