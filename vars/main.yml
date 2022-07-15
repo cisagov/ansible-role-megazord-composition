@@ -4,6 +4,6 @@ domain_name: sample.domain
 #The location to redirect to if a user is unauthorized
 redirect_location: cisa.gov
 #Name of the profile to retrieve keystore and password
-profile_name: default.profile
+profile_name: ocsp.profile
 #Whether or not to use staged payloads
 staging: True

@@ -70,7 +70,6 @@
     src: "{{ profile_name }}"
     dest: "/tools/Malleable-C2-Profiles/normal/{{ profile_name }}"
     mode: 0644
-  when: profile_name == 'default.profile'
 
 #The ansible slurp module will read the file into base64 encoded data
 - name: Extract keystore and password from user's profile
