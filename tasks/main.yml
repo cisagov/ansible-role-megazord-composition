@@ -121,7 +121,7 @@
         src: megazord-composition-compose.service
         dest: /lib/systemd/system/megazord-composition.service
         mode: 0644
-      when: ansible_distribution == 'Kali')
+      when: ansible_distribution == 'Kali'
 
     - name: System daemon-reload
       ansible.builtin.systemd:
