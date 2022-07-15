@@ -108,16 +108,24 @@
 # Copy service file into correct location and reload services
 - name: Configure megazord service
   block:
-    - name: Set up megazord as a systemd service
+    #Kali and Ubuntu 18.04 do not have the `docker compose` command because they are using an older version
+    - name: Set up megazord as a systemd service (docker compose)
       ansible.builtin.copy:
         src: megazord-composition.service
-        dest: /lib/systemd/system/
+        dest: /lib/systemd/system/megazord-composition.service
         mode: 0644
+      when: not(ansible_distribution == 'Kali' or (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '18'))
+    
+    - name: Setup service for distros that need docker-compose
+      ansible.builtin.copy:
+        src: megazord-composition-compose.service
+        dest: /lib/systemd/system/megazord-composition.service
+        mode: 0644
+      when: ansible_distribution == 'Kali' or (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '18')
 
     - name: System daemon-reload
       ansible.builtin.systemd:
         daemon_reload: true
-
   when:
     - ansible_service_mgr == "systemd"
 
