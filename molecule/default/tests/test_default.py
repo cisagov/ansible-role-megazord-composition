@@ -88,7 +88,7 @@ def test_redirection_helper(s, uri, user_agent, redirect_location) -> bool:
 
 def test_redirection_apache(host):
     """Test that the apache redirection is working as intended."""
-    file_name = "/tools/SourcePoint" + date.today() + ".profile"
+    file_name = "/tools/SourcePoint/SourcePoint-" + date.today() + ".profile"
 
     with open(file_name, "r") as f:
         lines = f.readlines()
