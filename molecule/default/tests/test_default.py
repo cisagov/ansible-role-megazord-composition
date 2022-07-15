@@ -3,10 +3,10 @@
 # Standard Python Libraries
 from datetime import date
 import os
+import socket
 
 # Third-Party Libraries
 import pytest
-import requests
 import testinfra.utils.ansible_runner
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
@@ -61,15 +61,34 @@ def test_docker_images_pulled(host, image):
     )
 
 
+def test_redirection_helper(s, uri, user_agent, redirect_location) -> bool:
+    """Helper function to try all 3 cases for apache redirection."""
+    ret_arr = [0, 0, 0]
+    http_get = "GET / HTTP/1.1\r\nHost:localhost/{}\r\nUser-Agent:{}\r\n\r\n"
+    s.connect(("localhost", 80))
+
+    s.send(http_get.format(uri, user_agent))
+    response = s.recv(1024)
+    # if the URI is in the response, we know it would be forwarded to the C2 server
+    if uri in response:
+        ret_arr[0] = 1
+
+    s.send(http_get.format("test", "dummy-user-agent"))
+    # if the redirect location is in the response, we know the redirection works
+    response = s.recv(1024)
+    if redirect_location in response:
+        ret_arr[1] = 1
+
+    s.send(http_get.format("/uploads", "dummy-user-agent"))
+    if "200" in response:
+        ret_arr[2] = 1
+
+    return 0 not in ret_arr
+
+
 def test_redirection_apache(host):
     """Test that the apache redirection is working as intended."""
-    file_name = "/tools/SourcePoint"
-    file_name += date.today()
-    file_name += ".profile"
-    user_agent = ""
-    htaccess = "/tools/Megazord-Composition/src/apache2/.htaccess"
-    htaccess_contents = ""
-    uri = ""
+    file_name = "/tools/SourcePoint" + date.today() + ".profile"
 
     with open(file_name, "r") as f:
         lines = f.readlines()
@@ -77,10 +96,16 @@ def test_redirection_apache(host):
             if "useragent" in line:
                 user_agent = line.split(" ")[-1][:-1]
                 break
-    
-    with open(htaccess, "r") as f:
+
+    with open("/tools/Megazord-Composition/src/apache2/.htaccess", "r") as f:
         contents = f.read()
         contents = contents.split("\n")
-    
-    uri = contents[contents.index("## Profile URIs")+1].split("^(")[1].split(".*|")[0]
-    assert True
+
+    uri = contents[contents.index("## Profile URIs") + 1].split("^(")[1].split(".*|")[0]
+    redirect = (
+        contents[contents.index("## Redirect all other traffic here") + 1]
+        .split(" ")[-2]
+        .split("/")[-2]
+    )
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    assert test_redirection_helper(s, uri, user_agent, redirect)

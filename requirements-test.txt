@@ -10,5 +10,5 @@ flake8
 molecule[docker]
 pre-commit
 pytest-testinfra
-yamllint
 requests
+yamllint
