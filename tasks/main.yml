@@ -59,8 +59,8 @@
 - name: Replace instances of 'P' (Proxy)
   ansible.builtin.replace:
     path: /tools/Megazord-Composition/src/apache2/.htaccess
-    regexp: \[P,L]
-    replace: [L]
+    regexp: '\[P,L]'
+    replace: '[L]'
 
 #TODO: Change location and add check for if the file is present
 - name: Copy profile into place
