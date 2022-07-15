@@ -5,8 +5,8 @@ Requires=docker.service
 
 [Service]
 Restart=always
-ExecStart=/usr/bin/docker compose --file /tools/Megazord-Composition/docker-compose.yml up
-ExecStop=/usr/bin/docker compose --file /tools/Megazord-Composition/docker-compose.yml down
+ExecStart=/usr/bin/docker-compose --file /tools/Megazord-Composition/docker-compose.yml up
+ExecStop=/usr/bin/docker-compose --file /tools/Megazord-Composition/docker-compose.yml down
 
 [Install]
 WantedBy=multi-user.target
