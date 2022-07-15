@@ -1,9 +1,5 @@
 ---
 # tasks file for megazord composition
-# - name: Load var file
-#   ansible.builtin.include_vars:
-#     file: main.yml
-
 - name: Create the /tools/Megazord-Composition directory
   ansible.builtin.file:
     mode: 0755
@@ -108,14 +104,15 @@
 # Copy service file into correct location and reload services
 - name: Configure megazord service
   block:
-    #Kali and Ubuntu 18.04 do not have the `docker compose` command because they are using an older version
+    #Kali does not have the `docker compose` command because it is using an older version,
+    #so it's service file uses `docker-compose`
     - name: Set up megazord as a systemd service (docker compose)
       ansible.builtin.copy:
         src: megazord-composition.service
         dest: /lib/systemd/system/megazord-composition.service
         mode: 0644
       when: not(ansible_distribution == 'Kali')
-    
+
     - name: Setup service for distros that need docker-compose
       ansible.builtin.copy:
         src: megazord-composition-compose.service
@@ -138,13 +135,3 @@
     state: started
   tags:
     - molecule-idempotence-notest
-
-- name: Check status of service
-  ansible.builtin.command: systemctl status megazord-composition.service
-  register: status_output
-  ignore_errors: true
-  changed_when: false
-
-- name: print status
-  ansible.builtin.debug:
-    msg: "{{ status_output }}"
