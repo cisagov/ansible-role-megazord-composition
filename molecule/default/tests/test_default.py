@@ -37,8 +37,7 @@ def test_sourcepoint_profile(host, d):
 
 def test_containers(host):
     """Test that the docker containers are running."""
-    assert host.docker("apache").is_running
-    assert host.docker("coredns").is_running
+    assert len(host.docker.get_containers(status="running")) == 2
 
 
 def test_service(host):
