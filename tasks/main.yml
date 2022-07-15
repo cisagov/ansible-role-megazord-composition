@@ -114,14 +114,14 @@
         src: megazord-composition.service
         dest: /lib/systemd/system/megazord-composition.service
         mode: 0644
-      when: not(ansible_distribution == 'Kali' or (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '18'))
+      when: not(ansible_distribution == 'Kali')
     
     - name: Setup service for distros that need docker-compose
       ansible.builtin.copy:
         src: megazord-composition-compose.service
         dest: /lib/systemd/system/megazord-composition.service
         mode: 0644
-      when: ansible_distribution == 'Kali' or (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '18')
+      when: ansible_distribution == 'Kali')
 
     - name: System daemon-reload
       ansible.builtin.systemd:
