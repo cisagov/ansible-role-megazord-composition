@@ -137,6 +137,8 @@
     - ansible_service_mgr == "systemd"
 
 # enable and start megazord-composition service
+# idempotence is disabled because it cannot pass with systemd service testing
+# we decided to do this based on another cisagov repo 'ansible-role-docker'
 - name: Enable megazord systemd service
   ansible.builtin.systemd:
     name: megazord-composition.service
