@@ -1,14 +1,13 @@
 ---
 # tasks file for megazord composition
-# - name: Load var file
-#   ansible.builtin.include_vars:
-#     file: main.yml
-
 - name: Create the /tools/Megazord-Composition directory
   ansible.builtin.file:
     mode: 0755
-    path: /tools/Megazord-Composition
+    path: "{{ item }}"
     state: directory
+  with_items:
+    - /tools/Megazord-Composition
+    - /tools/Malleable-C2-Profiles/normal
 
 - name: Download and tar the Megazord-Composition
   ansible.builtin.unarchive:
@@ -20,7 +19,7 @@
     creates: /tools/Megazord-Composition/docker-compose.yml
 
 - name: Run SourcePoint
-  ansible.builtin.command: "./SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage True"
+  ansible.builtin.command: "./SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage {{ staging }}"
   args:
     chdir: /tools/SourcePoint
     creates: "/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile"
@@ -62,22 +61,29 @@
     regexp: '\[P,L]'
     replace: '[L]'
 
-#TODO: Change location and add check for if the file is present
+- name: Check if profile exists
+  ansible.builtin.stat:
+    path: "/tools/Malleable-C2-Profiles/normal/{{ profile_name }}"
+  register: profile_check
+  changed_when: not profile_check.stat.exists
+
+#Copy our default profile if there is nothing in that location
 - name: Copy profile into place
-  copy:
-    src: "{{ default_profile }}"
-    dest: "/tools/{{ default_profile }}"
+  ansible.builtin.copy:
+    src: "{{ profile_name }}"
+    dest: "/tools/Malleable-C2-Profiles/normal/{{ profile_name }}"
     mode: 0644
+  when: not profile_check.stat.exists
 
 #The ansible slurp module will read the file into base64 encoded data
 - name: Extract keystore and password from user's profile
   ansible.builtin.slurp:
-    src: "/tools/{{ default_profile }}"
+    src: "/tools/Malleable-C2-Profiles/normal/{{ profile_name }}"
   register: encoded_profile
 
 #Decode the encoded profile and split on new line to extract the last 4 lines later
 - name: Decode the profile and split on new line
-  set_fact:
+  ansible.builtin.set_fact:
     https_certificate: "{{ encoded_profile['content'] | b64decode | split('\n') }}"
 
 #Get the last 6 lines of the profile, which contains the https-certificate keystore
@@ -108,16 +114,25 @@
 # Copy service file into correct location and reload services
 - name: Configure megazord service
   block:
-    - name: Set up megazord as a systemd service
+    #Kali does not have the `docker compose` command because it is using an older version,
+    #so it's service file uses `docker-compose`
+    - name: Set up megazord as a systemd service (docker compose)
       ansible.builtin.copy:
         src: megazord-composition.service
-        dest: /lib/systemd/system/
+        dest: /lib/systemd/system/megazord-composition.service
         mode: 0644
+      when: not(ansible_distribution == 'Kali')
+
+    - name: Setup service for distros that need docker-compose
+      ansible.builtin.copy:
+        src: megazord-composition-compose.service
+        dest: /lib/systemd/system/megazord-composition.service
+        mode: 0644
+      when: ansible_distribution == 'Kali'
 
     - name: System daemon-reload
       ansible.builtin.systemd:
         daemon_reload: true
-
   when:
     - ansible_service_mgr == "systemd"
 
