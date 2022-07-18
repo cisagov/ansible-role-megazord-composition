@@ -19,6 +19,7 @@ None.
 
 - [ansible-role-cs2modrewrite](https://github.com/xvxd4sh/ansible-role-cs2modrewrite)
 - [ansible-role-sourcepoint](https://github.com/hsfetty/ansible-role-sourcepoint)
+- [ansible-role-docker](https://github.com/cisagov/ansible-role-docker)
 
 ## Example Playbook ##
 
