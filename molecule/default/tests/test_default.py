@@ -87,9 +87,11 @@ def test_redirection_helper(s, uri, user_agent, redirect_location) -> bool:
     return 0 not in ret_arr
 
 
+@pytest.mark.parametrize("d", ["/tools/SourcePoint"])
 def test_redirection_apache(host):
     """Test that the apache redirection is working as intended."""
-    file_name = "/tools/SourcePoint/SourcePoint-" + str(date.today()) + ".profile"
+    today = date.today()
+    file_name = "{}/SourcePoint-{}.profile".format(d, today)
 
     with open(file_name, "r") as f:
         lines = f.readlines()
