@@ -24,6 +24,14 @@
     chdir: /tools/SourcePoint
     creates: "/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile"
 
+#The placeholder value for the domain in the Corefile is evil.c2
+#We simply replace it with the value loaded from the variable
+- name: Add domain name to Corefile
+  ansible.builtin.replace:
+    path: /tools/Megazord-Composition/src/coredns/config/Corefile
+    regexp: 'evil.c2'
+    replace: '{{ domain_name }}'
+
 #Edit cs2modrewrite python code so that it always uses utf8 encoding
 #See issue for more info:
 ## https://github.com/hsfetty/ansible-role-megazord-composition/issues/19
