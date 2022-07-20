@@ -8,17 +8,13 @@ None.
 
 ## Role Variables ##
 
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| domain_name | The domain name for cobalt strike. | `sample.domain` | No |
-| redirect_location | The site to redirect unwanted traffic to, excluding 'https://'. | `cisa.gov` | No |
-| profile_name | Name of the profile to retrieve keystore and password | `ocsp.profile` | No |
-| staging | Whether or not to set staging when configuring the profile | `True` | No |
+None.
 
 ## Dependencies ##
 
 - [ansible-role-cs2modrewrite](https://github.com/xvxd4sh/ansible-role-cs2modrewrite)
 - [ansible-role-sourcepoint](https://github.com/hsfetty/ansible-role-sourcepoint)
+- [ansible-role-docker](https://github.com/cisagov/ansible-role-docker)
 
 ## Example Playbook ##
 

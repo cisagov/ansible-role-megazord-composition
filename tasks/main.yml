@@ -3,11 +3,8 @@
 - name: Create the /tools/Megazord-Composition directory
   ansible.builtin.file:
     mode: 0755
-    path: "{{ item }}"
+    path: /tools/Megazord-Composition
     state: directory
-  with_items:
-    - /tools/Megazord-Composition
-    - /tools/Malleable-C2-Profiles/normal
 
 - name: Download and tar the Megazord-Composition
   ansible.builtin.unarchive:
@@ -17,91 +14,6 @@
     extra_opts:
       - "--strip-components=1"
     creates: /tools/Megazord-Composition/docker-compose.yml
-
-- name: Run SourcePoint
-  ansible.builtin.command: "./SourcePoint -Host {{ domain_name }} -Outfile SourcePoint-{{ ansible_date_time.date }}.profile -Injector NtMapViewOfSection -Stage {{ staging }}"
-  args:
-    chdir: /tools/SourcePoint
-    creates: "/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile"
-
-#The placeholder value for the domain in the Corefile is evil.c2
-#We simply replace it with the value loaded from the variable
-- name: Add domain name to Corefile
-  ansible.builtin.replace:
-    path: /tools/Megazord-Composition/src/coredns/config/Corefile
-    regexp: 'evil.c2'
-    replace: '{{ domain_name }}'
-
-#Edit cs2modrewrite python code so that it always uses utf8 encoding
-#See issue for more info:
-## https://github.com/hsfetty/ansible-role-megazord-composition/issues/19
-- name: Standardize encoding in cs2modrewrite
-  ansible.builtin.replace:
-    path: /tools/cs2modrewrite/cs2modrewrite.py
-    regexp: 'profile = open\(args.inputfile,"r"\)'
-    replace: 'profile = open(args.inputfile,"r",encoding="utf-8")'
-
-#Edit cs2modrewrite python code so that it always uses utf8 decoding
-#See issue for more info:
-## https://github.com/hsfetty/ansible-role-megazord-composition/issues/19
-- name: Decoding of file contents in cs2modrewrite
-  ansible.builtin.replace:
-    path: /tools/cs2modrewrite/cs2modrewrite.py
-    regexp: 'contents = profile.read\(\)\n'
-    replace: 'contents = profile.read().decode("utf-8")'
-
-- name: Run cs2modrewrite.py
-  ansible.builtin.command: 'python3 cs2modrewrite.py -i /tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile -c https://{{ domain_name }} -r https://{{ redirect_location }} -o /tools/Megazord-Composition/src/apache2/.htaccess'
-  args:
-    chdir: '/tools/cs2modrewrite'
-    creates: '/tools/Megazord-Composition/src/apache2/.htaccess'
-  environment: #Environment variables allow older versions of python to read the profile
-    LANG: "en_US.UTF-8"
-    LC_ALL: "en_US.UTF-8"
-    LC_CTYPE: "en_US.UTF-8"
-
-# Remove the 'P' for proxy because it interferes with the webserver configuration
-# Issue described here:
-  # https://github.com/hsfetty/ansible-role-megazord-composition/issues/8
-- name: Replace instances of 'P' (Proxy)
-  ansible.builtin.replace:
-    path: /tools/Megazord-Composition/src/apache2/.htaccess
-    regexp: '\[P,L]'
-    replace: '[L]'
-
-- name: Check if profile exists
-  ansible.builtin.stat:
-    path: "/tools/Malleable-C2-Profiles/normal/{{ profile_name }}"
-  register: profile_check
-  changed_when: not profile_check.stat.exists
-
-#Copy our default profile if there is nothing in that location
-- name: Copy profile into place
-  ansible.builtin.copy:
-    src: "{{ profile_name }}"
-    dest: "/tools/Malleable-C2-Profiles/normal/{{ profile_name }}"
-    mode: 0644
-  when: not profile_check.stat.exists
-
-#The ansible slurp module will read the file into base64 encoded data
-- name: Extract keystore and password from user's profile
-  ansible.builtin.slurp:
-    src: "/tools/Malleable-C2-Profiles/normal/{{ profile_name }}"
-  register: encoded_profile
-
-#Decode the encoded profile and split on new line to extract the last 4 lines later
-- name: Decode the profile and split on new line
-  ansible.builtin.set_fact:
-    https_certificate: "{{ encoded_profile['content'] | b64decode | split('\n') }}"
-
-#Get the last 6 lines of the profile, which contains the https-certificate keystore
-#and password, join it to a string, and append it to the SourcePoint profile
-#Ansible fails if we try to do all of the manipulation in the https_certificate variable
-- name: Append certificate info to SourcePoint generated profile
-  ansible.builtin.blockinfile:
-    path: "/tools/SourcePoint/SourcePoint-{{ ansible_date_time.date }}.profile"
-    block: |
-      "{{ https_certificate[-6:] | join('\n') }}"
 
 # pull docker images from dockerhub
 - name: Pull docker images used by megazord composition
@@ -138,19 +50,5 @@
         mode: 0644
       when: ansible_distribution == 'Kali'
 
-    - name: System daemon-reload
-      ansible.builtin.systemd:
-        daemon_reload: true
   when:
     - ansible_service_mgr == "systemd"
-
-# enable and start megazord-composition service
-# idempotence is disabled because it cannot pass with systemd service testing
-# we decided to do this based on another cisagov repo 'ansible-role-docker'
-- name: Enable megazord systemd service
-  ansible.builtin.systemd:
-    name: megazord-composition.service
-    enabled: yes
-    state: started
-  tags:
-    - molecule-idempotence-notest
