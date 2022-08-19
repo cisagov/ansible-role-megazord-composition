@@ -1,19 +1,19 @@
 ---
 # tasks file for megazord composition
-- name: Create the /tools/Megazord-Composition directory
+- name: Create the /tools/megazord-composition directory
   ansible.builtin.file:
     mode: 0755
-    path: /tools/Megazord-Composition
+    path: /tools/megazord-composition
     state: directory
 
-- name: Download and tar the Megazord-Composition
+- name: Download and tar the megazord-composition
   ansible.builtin.unarchive:
     src: https://github.com/xvxd4sh/megazord-composition/tarball/develop
-    dest: /tools/Megazord-Composition
+    dest: /tools/megazord-composition
     remote_src: yes
     extra_opts:
       - "--strip-components=1"
-    creates: /tools/Megazord-Composition/docker-compose.yml
+    creates: /tools/megazord-composition/docker-compose.yml
 
 # pull docker images from dockerhub
 - name: Pull docker images used by megazord composition
@@ -30,6 +30,7 @@
       loop:
         - xvxd4sh/coredns:latest
         - xvxd4sh/apache2:latest
+        - xvxd4sh/java-debian11:latest
 
 # Copy service file into correct location and reload services
 - name: Configure megazord service
