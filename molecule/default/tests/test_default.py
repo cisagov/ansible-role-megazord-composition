@@ -20,6 +20,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     [
         "xvxd4sh/coredns:latest",
         "xvxd4sh/apache2:latest",
+        "xvxd4sh/java-debian11:latest",
     ],
 )
 def test_docker_images_pulled(host, image):
