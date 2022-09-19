@@ -38,7 +38,7 @@ galaxy_info:
 dependencies:
   - src: https://github.com/cisagov/ansible-role-cs2modrewrite
     name: cs2modrewrite
-  - src: https://github.com/cisagov/ansible-role-sourcepoint
-    name: sourcepoint
   - src: https://github.com/cisagov/ansible-role-docker
     name: docker
+  - src: https://github.com/cisagov/ansible-role-sourcepoint
+    name: sourcepoint
