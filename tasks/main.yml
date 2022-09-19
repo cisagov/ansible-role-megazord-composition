@@ -28,8 +28,8 @@
         name: "{{ item }}"
         source: pull
       loop:
-        - cisagov/coredns:latest
         - cisagov/apache2:latest
+        - cisagov/coredns:latest
         - cisagov/java-debian11:latest
 
 # Copy service file into correct location and reload services
