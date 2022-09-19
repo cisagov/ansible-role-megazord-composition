@@ -13,8 +13,8 @@ None.
 ## Dependencies ##
 
 - [ansible-role-cs2modrewrite](https://github.com/cisagov/ansible-role-cs2modrewrite)
-- [ansible-role-sourcepoint](https://github.com/cisagov/ansible-role-sourcepoint)
 - [ansible-role-docker](https://github.com/cisagov/ansible-role-docker)
+- [ansible-role-sourcepoint](https://github.com/cisagov/ansible-role-sourcepoint)
 
 ## Example Playbook ##
 
