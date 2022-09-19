@@ -7,9 +7,9 @@
   name: remove_python2
 - src: https://github.com/cisagov/ansible-role-upgrade
   name: upgrade
-- src: https://github.com/xvxd4sh/ansible-role-cs2modrewrite
+- src: https://github.com/cisagov/ansible-role-cs2modrewrite
   name: cs2modrewrite
-- src: https://github.com/hsfetty/ansible-role-sourcepoint
+- src: https://github.com/cisagov/ansible-role-sourcepoint
   name: sourcepoint
 - src: https://github.com/cisagov/ansible-role-docker
   name: docker
