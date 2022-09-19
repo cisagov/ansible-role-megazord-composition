@@ -18,8 +18,8 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 @pytest.mark.parametrize(
     "image",
     [
-        "cisagov/coredns:latest",
         "cisagov/apache2:latest",
+        "cisagov/coredns:latest",
         "cisagov/java-debian11:latest",
     ],
 )
