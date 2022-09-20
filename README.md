@@ -1,6 +1,6 @@
 # ansible-role-megazord-composition #
 
-[![GitHub Build Status](https://github.com/hsfetty/ansible-role-megazord-composition/workflows/build/badge.svg)](https://github.com/hsfetty/ansible-role-megazord-composition/actions)
+[![GitHub Build Status](https://github.com/cisagov/ansible-role-megazord-composition/workflows/build/badge.svg)](https://github.com/cisagov/ansible-role-megazord-composition/actions)
 
 ## Requirements ##
 
@@ -12,9 +12,9 @@ None.
 
 ## Dependencies ##
 
-- [ansible-role-cs2modrewrite](https://github.com/xvxd4sh/ansible-role-cs2modrewrite)
-- [ansible-role-sourcepoint](https://github.com/karendm/ansible-role-sourcepoint)
+- [ansible-role-cs2modrewrite](https://github.com/cisagov/ansible-role-cs2modrewrite)
 - [ansible-role-docker](https://github.com/cisagov/ansible-role-docker)
+- [ansible-role-sourcepoint](https://github.com/cisagov/ansible-role-sourcepoint)
 
 ## Example Playbook ##
 
