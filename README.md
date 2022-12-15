@@ -1,6 +1,7 @@
 # ansible-role-megazord-composition #
 
 [![GitHub Build Status](https://github.com/cisagov/ansible-role-megazord-composition/workflows/build/badge.svg)](https://github.com/cisagov/ansible-role-megazord-composition/actions)
+[![CodeQL](https://github.com/cisagov/ansible-role-megazord-composition/workflows/CodeQL/badge.svg)](https://github.com/cisagov/ansible-role-megazord-composition/actions/workflows/codeql-analysis.yml)
 
 ## Requirements ##
 
@@ -24,8 +25,10 @@ Here's how to use this in a playbook:
 - hosts: all
   become: yes
   become_method: sudo
-  roles:
-    - megazord-composition
+  tasks:
+    - name: Install the Megazord composition
+      ansible.builtin.include_role:
+        name: megazord_composition
 ```
 
 ## Contributing ##
