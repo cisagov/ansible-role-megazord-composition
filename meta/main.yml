@@ -1,8 +1,14 @@
 ---
+dependencies: []
 galaxy_info:
+<<<<<<< HEAD
   author: Brian Hambleton
   description: Megazord Composition Ansible role
+=======
+  author: First Last
+>>>>>>> fce8bb34affe56ef03e6ac7feccf733fece5816b
   company: CISA Cyber Assessments
+  description: Skeleton Ansible role
   galaxy_tags:
     - megazord
   license: CC0
@@ -25,16 +31,24 @@ galaxy_info:
         # Debian Testing:
         # https://www.kali.org/docs/policy/kali-linux-relationship-with-debian
         - bookworm
+<<<<<<< HEAD
     # - name: Fedora
     #   versions:
     #     - "35"
     #     - "36"
     #     - "37"
+=======
+    - name: Fedora
+      versions:
+        - "36"
+        - "37"
+>>>>>>> fce8bb34affe56ef03e6ac7feccf733fece5816b
     - name: Ubuntu
       versions:
         - bionic
         - focal
         - jammy
+<<<<<<< HEAD
   role_name: megazord
 
 dependencies:
@@ -44,3 +58,6 @@ dependencies:
     name: docker
   - src: https://github.com/cisagov/ansible-role-sourcepoint
     name: sourcepoint
+=======
+  role_name: skeleton
+>>>>>>> fce8bb34affe56ef03e6ac7feccf733fece5816b
