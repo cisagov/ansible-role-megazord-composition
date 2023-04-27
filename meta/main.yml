@@ -27,9 +27,6 @@ galaxy_info:
       versions:
         - buster
         - bullseye
-        # Kali linux isn't an option here, but it is based on
-        # Debian Testing:
-        # https://www.kali.org/docs/policy/kali-linux-relationship-with-debian
         - bookworm
 <<<<<<< HEAD
     # - name: Fedora
@@ -42,7 +39,13 @@ galaxy_info:
       versions:
         - "36"
         - "37"
+<<<<<<< HEAD
 >>>>>>> fce8bb34affe56ef03e6ac7feccf733fece5816b
+=======
+    - name: Kali
+      versions:
+        - "2023"
+>>>>>>> e112e3b67d47c7d7a9b01f00d3822993b6434cb0
     - name: Ubuntu
       versions:
         - bionic
