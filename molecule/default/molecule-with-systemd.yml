@@ -15,6 +15,7 @@ lint: |
   ansible-lint
   flake8
 platforms:
+<<<<<<< HEAD
   # - cgroupns_mode: host
   #   command: /lib/systemd/systemd
   #   image: geerlingguy/docker-amazonlinux2-ansible:latest
@@ -24,6 +25,17 @@ platforms:
   #   privileged: yes
   #   volumes:
   #     - /sys/fs/cgroup:/sys/fs/cgroup:rw
+=======
+  - cgroupns_mode: host
+    command: /lib/systemd/systemd
+    image: geerlingguy/docker-amazonlinux2-ansible:latest
+    name: amazonlinux2-systemd
+    platform: amd64
+    pre_build_image: yes
+    privileged: yes
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+>>>>>>> a1b1d53b93c0ac16106076d12c3de03a77231d51
   - cgroupns_mode: host
     command: /lib/systemd/systemd
     image: geerlingguy/docker-debian10-ansible:latest
@@ -135,8 +147,11 @@ platforms:
     privileged: yes
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
+<<<<<<< HEAD
 provisioner:
   name: ansible
+=======
+>>>>>>> a1b1d53b93c0ac16106076d12c3de03a77231d51
 scenario:
   name: default
 verifier:
