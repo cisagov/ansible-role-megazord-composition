@@ -1,8 +1,14 @@
 ---
+dependencies: []
 galaxy_info:
+<<<<<<< HEAD
   author: Brian Hambleton
   description: Megazord Composition Ansible role
+=======
+  author: First Last
+>>>>>>> fce8bb34affe56ef03e6ac7feccf733fece5816b
   company: CISA Cyber Assessments
+  description: Skeleton Ansible role
   galaxy_tags:
     - megazord
   license: CC0
@@ -11,28 +17,55 @@ galaxy_info:
   # OS family.  This simplifies a lot of things for roles that support
   # Kali Linux, so it makes sense to force the installation of Ansible
   # 2.10 or newer.
-  min_ansible_version: 2.10
+  min_ansible_version: "2.10"
   namespace: cisagov
   platforms:
-    # - name: Amazon
+<<<<<<< HEAD
+<<<<<<< HEAD
+    # - name: Amazon Linux 2
     #   versions:
-    #     - 2
+    #     - any
+=======
+    - name: Amazon Linux 2023
+      versions:
+        - any
+>>>>>>> 52265b1321120661660b8400425f25f9d3021afe
+=======
+    - name: Amazon Linux
+      versions:
+        - "2023"
+>>>>>>> b1e866deabc2408ffe58711e6a0f32446d183205
     - name: Debian
       versions:
         - buster
         - bullseye
-        # Kali linux isn't an option here, but it is based on
-        # Debian Testing:
-        # https://www.kali.org/docs/policy/kali-linux-relationship-with-debian
         - bookworm
+<<<<<<< HEAD
     # - name: Fedora
     #   versions:
-    #     - 34
-    #     - 35
+    #     - "35"
+    #     - "36"
+    #     - "37"
+=======
+    - name: Fedora
+      versions:
+        - "37"
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> fce8bb34affe56ef03e6ac7feccf733fece5816b
+=======
+=======
+        - "38"
+>>>>>>> 74d20aba3059a0bc024f490231c7c6ebc3e1231a
+    - name: Kali
+      versions:
+        - "2023"
+>>>>>>> e112e3b67d47c7d7a9b01f00d3822993b6434cb0
     - name: Ubuntu
       versions:
-        - bionic
         - focal
+        - jammy
+<<<<<<< HEAD
   role_name: megazord
 
 dependencies:
@@ -42,3 +75,6 @@ dependencies:
     name: docker
   - src: https://github.com/cisagov/ansible-role-sourcepoint
     name: sourcepoint
+=======
+  role_name: skeleton
+>>>>>>> fce8bb34affe56ef03e6ac7feccf733fece5816b
