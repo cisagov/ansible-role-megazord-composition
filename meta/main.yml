@@ -21,6 +21,7 @@ galaxy_info:
   namespace: cisagov
   platforms:
 <<<<<<< HEAD
+<<<<<<< HEAD
     # - name: Amazon Linux 2
     #   versions:
     #     - any
@@ -29,6 +30,11 @@ galaxy_info:
       versions:
         - any
 >>>>>>> 52265b1321120661660b8400425f25f9d3021afe
+=======
+    - name: Amazon Linux
+      versions:
+        - "2023"
+>>>>>>> b1e866deabc2408ffe58711e6a0f32446d183205
     - name: Debian
       versions:
         - buster
@@ -54,7 +60,6 @@ galaxy_info:
 >>>>>>> e112e3b67d47c7d7a9b01f00d3822993b6434cb0
     - name: Ubuntu
       versions:
-        - bionic
         - focal
         - jammy
 <<<<<<< HEAD
